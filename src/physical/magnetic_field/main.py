@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Position():
     """
     A numpy object. dont forget.
@@ -19,7 +18,7 @@ def magnetic_field_moduli(pos: Position , pos_eval: Position)-> float:
     """
     It takes a wire and return the modu
     """
-    returns 1/distance(pos,pos_eval)
+    return 1/distance(pos,pos_eval)
 
 
 def magnetic_field_direction():

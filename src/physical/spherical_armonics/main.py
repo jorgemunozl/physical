@@ -1,24 +1,42 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from utils import double_fac
 
 
-def legendre_polinomial(n, x):
+class Legendre:
     """
-    Genre from recursion, n>=1
+    Simple Legendre polynomial generator based on the recurrence
+    P_n(x) = ((2n-1)x P_{n-1}(x) - (n-1) P_{n-2}(x)) / n.
     """
-    if n == 0:
-        return 1
-    elif n == 1:
-        return x
-    else:
-        p1 = (2*(n)-1)*x*legendre_polinomial(n-1, x)
-        p2 = (n-1)*legendre_polinomial(n-2, x)
-        return (1/n)*(p1 - p2)
 
+    def __init__(self, n: int) -> None:
+        if n < 0:
+            raise ValueError("Need n >= 0")
+        self.n = n
 
-def legendre_2(x):
-    return 1/2*(3*np.pow(x, 2)-1)
+    def polynomial(self, x):
+        """
+        Evaluate P_n(x) using the standard recursion.
+        """
+        x_arr = np.asarray(x, dtype=float)
+        if self.n == 0:
+            return np.ones_like(x_arr, dtype=float)
+        if self.n == 1:
+            return x_arr
+
+        p_nm2 = np.ones_like(x_arr, dtype=float)  # P_0
+        p_nm1 = x_arr  # P_1
+        for ell in range(2, self.n + 1):
+            p_n = ((2 * ell - 1) * x_arr * p_nm1 - (ell - 1) * p_nm2) / ell
+            p_nm2, p_nm1 = p_nm1, p_n
+        return p_nm1
+
+    def pol_2(self, x):
+        """
+        Comparation
+        """
+        return 1/2*(3*np.pow(x, 2)-1)
 
 
 def legendre_5(x):
@@ -42,7 +60,7 @@ def P_lm(l, m, x):
         raise ValueError("Need 0 <= m <= l")
 
     # P_m^m(x)
-    P_mm = (-1)**m * double_factorial(2*m - 1) * (1 - x**2)**(m/2)
+    P_mm = (-1)**m * double_fac(2*m - 1) * (1 - x**2)**(m/2)
     if l == m:
         return P_mm
 
@@ -60,15 +78,6 @@ def P_lm(l, m, x):
         P_lm2, P_lm1 = P_lm1, P_l
 
     return P_l
-
-
-def double_factorial(n):
-    if n <= 0:
-        return 1
-    result = 1
-    for k in range(n, 0, -2):
-        result *= k
-    return result
 
 
 def d_m_legendre(l, m, x):
